@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+
+.ctags
+
+node_modules/
+website/static/website/js/vendor/
