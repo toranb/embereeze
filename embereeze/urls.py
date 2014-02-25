@@ -1,12 +1,12 @@
+from django.views.generic import TemplateView
 from django.conf.urls import patterns, include, url
 
-from django.contrib import admin
-admin.autodiscover()
+from api import urls as api_urls
+
+class Index(TemplateView):
+    template_name = 'index.html'
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'embereeze.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', Index.as_view()),
+    url(r'^api/', include(api_urls, namespace='api')),
 )
