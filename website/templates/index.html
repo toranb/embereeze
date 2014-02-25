@@ -1,0 +1,38 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Embereeze</title>
+</head>
+<body>
+
+  <script type="text/javascript" src="{% static 'website/js/vendor/jquery/jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'website/js/vendor/handlebars/handlebars.js' %}"></script>
+  <script type="text/javascript" src="{% static 'website/js/vendor/ember/ember.js' %}"></script>
+  <script type="text/javascript" src="{% static 'website/js/vendor/breeze/Samples/Edmunds/Edmunds/Scripts/q.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'website/js/vendor/breeze/Breeze.Client/Scripts/breeze.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'website/js/app.js' %}"></script>
+
+  <script>
+    function compile(template) {
+      var templateName = template.split('/templates/').reverse()[0].replace('.handlebars', '');
+      $.ajax({
+        url: template,
+        cache: false,
+        async: false,
+        success: function (source) {
+          var input = Ember.Handlebars.precompile(source.toString());
+          Ember.TEMPLATES[templateName] = Ember.Handlebars.template(input);
+        }
+      });
+    }
+    compile('http://localhost:8000/static/website/js/templates/application.handlebars');
+    compile('http://localhost:8000/static/website/js/templates/sessions.handlebars');
+    compile('http://localhost:8000/static/website/js/templates/session.handlebars');
+  </script>
+
+</body>
+</html>
