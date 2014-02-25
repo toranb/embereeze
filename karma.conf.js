@@ -3,8 +3,14 @@ module.exports = function(karma) {
         basePath: 'website/static/website',
 
         files: [
+          "js/vendor/jquery/jquery.min.js",
+          "js/vendor/handlebars/handlebars.js",
+          "js/vendor/ember/ember.js",
+          "js/vendor/breeze/Samples/Edmunds/Edmunds/Scripts/q.min.js",
+          "js/vendor/breeze/Breeze.Client/Scripts/breeze.min.js",
           "js/app.js",
           "js/tests/integration_test_helper.js",
+          "js/vendor/jquery-mockjax/jquery.mockjax.js",
           "js/tests/sessions_view_integration_tests.js",
           "js/templates/*.handlebars",
         ],
@@ -22,6 +28,17 @@ module.exports = function(karma) {
         autoWatch: false,
         singleRun: true,
 
-        frameworks: ['qunit']
+        frameworks: ["qunit"],
+
+        plugins: [
+            'karma-qunit',
+            'karma-chrome-launcher',
+            'karma-ember-preprocessor',
+            'karma-phantomjs-launcher'
+        ],
+
+        preprocessors: {
+            "**/*.handlebars": 'ember'
+        }
     });
 };

@@ -4,6 +4,7 @@
   "dependencies": {
     "ember": "1.4.0",
     "handlebars": "1.2.1",
-    "breeze": "*"
+    "breeze": "*",
+    "jquery-mockjax": "*"
   }
 }

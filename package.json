@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "bower": "*"
+    "bower": "*",
+    "karma-ember-preprocessor": "*",
+    "karma-qunit": "*",
+    "karma": "0.10.2"
   },
   "scripts": {
     "postinstall": "bower install"
