@@ -7,12 +7,19 @@ App.Router.map(function() {
 App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var sessions = [];
-        $.getJSON("/api/sessions/", function(response) {
-            response.forEach(function(pojo) {
+        var ds = new breeze.DataService({
+            serviceName: 'api',
+            hasServerMetadata: false,
+            useJsonp: false
+        });
+        var manager = new breeze.EntityManager({dataService: ds});
+        var query = new breeze.EntityQuery().from("sessions");
+        return manager.executeQuery(query).then(function(response){
+            response.results.forEach(function(pojo){
                 var session = Ember.Object.create(pojo);
                 sessions.pushObject(session);
             });
+            return sessions;
         });
-        return sessions;
     }
 });
