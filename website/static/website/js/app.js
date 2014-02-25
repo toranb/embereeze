@@ -6,26 +6,45 @@ App.Router.map(function() {
 
 App.SessionsRoute = Ember.Route.extend({
     model: function() {
-        //move to an initializer of some kind (start)
-        var ds = new breeze.DataService({
-            serviceName: 'api',
-            hasServerMetadata: false,
-            useJsonp: false
-        });
-        var manager = new breeze.EntityManager({dataService: ds});
-        App.BreezeFactory(manager.metadataStore);
-        //move to an initializer (end)
-
         var query = new breeze.EntityQuery().from("sessions");
-        return manager.executeQuery(query).then(function(response) {
+        return this.store.executeQuery(query).then(function(response) {
             return response.results;
         });
     }
 });
 
-App.BreezeFactory = Ember.Object.extend({
-    init: function(metadataStore) {
-        metadataStore.addEntityType({
+Ember.onLoad('Ember.Application', function(Application) {
+
+    Application.initializer({
+        name: "store",
+
+        initialize: function(container, application) {
+            application.register('store:main', App.BreezeStore);
+        }
+    });
+
+    Application.initializer({
+        name: "injectStore",
+        before: "store",
+
+        initialize: function(container, application) {
+            application.inject('controller', 'store', 'store:main');
+            application.inject('route', 'store', 'store:main');
+        }
+    });
+
+});
+
+App.BreezeStore = Ember.Object.extend({
+    instance: null,
+    init: function() {
+        var ds = new breeze.DataService({
+            serviceName: 'api',
+            hasServerMetadata: false,
+            useJsonp: false
+        });
+        this.instance = new breeze.EntityManager({dataService: ds});
+        this.instance.metadataStore.addEntityType({
             shortName: "Session",
             namespace: "App",
             dataProperties: {
@@ -33,5 +52,9 @@ App.BreezeFactory = Ember.Object.extend({
                 name:       { dataType: breeze.DataType.String }
             }
         });
+    },
+    executeQuery: function(query) {
+        //clearly a hack ...
+        return this.instance.executeQuery(query);
     }
 });
