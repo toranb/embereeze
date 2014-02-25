@@ -7,9 +7,19 @@ App.Router.map(function() {
 App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var query = new breeze.EntityQuery().from("sessions");
-        return this.store.executeQuery(query).then(function(response) {
-            return response.results;
+        return this.store.executeQuery(query).then(function(data) {
+            return data.results;
         });
+    }
+});
+
+App.SessionsController = Ember.ArrayController.extend({
+    actions: {
+        remove: function(session) {
+            //not yet working ...
+            session.entityAspect.setDeleted();
+            session.save();
+        }
     }
 });
 
