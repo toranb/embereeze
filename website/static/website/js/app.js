@@ -8,7 +8,12 @@ App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var query = new breeze.EntityQuery().from("sessions");
         return this.store.executeQuery(query).then(function(data) {
-            return data.results;
+            var sessions = [];
+            data.results.forEach(function(hash) {
+                var session = Ember.Object.create(hash);
+                sessions.pushObject(session);
+            });
+            return sessions;
         });
     }
 });
