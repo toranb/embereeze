@@ -21,9 +21,9 @@ App.SessionsRoute = Ember.Route.extend({
 App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
-            //still not working ...
-            session.entityAspect.setDeleted();
-            this.store.service.saveChanges();
+            this.removeObject(session);
+            // session.entityAspect.setDeleted();
+            // this.store.service.saveChanges();
         }
     }
 });
