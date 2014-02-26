@@ -1,7 +1,7 @@
 <table>
 {{#each session in controller}}
 <tr>
-  <td>{{input value=session.name}}</td>
+  <td>{{session.name}}</td>
   <td><button {{action "remove" session}}>Delete</button></td>
 </tr>
 {{/each}}
