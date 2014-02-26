@@ -16,9 +16,9 @@ App.SessionsRoute = Ember.Route.extend({
 App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
-            //not yet working ...
+            //still not working ...
             session.entityAspect.setDeleted();
-            session.save();
+            this.store.service.saveChanges();
         }
     }
 });
@@ -47,13 +47,14 @@ Ember.onLoad('Ember.Application', function(Application) {
 
 App.BreezeStore = Ember.Object.extend({
     instance: null,
+    service: null,
     init: function() {
-        var ds = new breeze.DataService({
+        this.service = new breeze.DataService({
             serviceName: 'api',
             hasServerMetadata: false,
             useJsonp: false
         });
-        this.instance = new breeze.EntityManager({dataService: ds});
+        this.instance = new breeze.EntityManager({dataService: this.service});
         this.instance.metadataStore.addEntityType({
             shortName: "Session",
             namespace: "App",
