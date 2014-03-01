@@ -33,7 +33,6 @@ App.BreezeStore = Ember.Object.extend({
         });
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
         breeze.config.initializeAdapterInstance("ajax", "jQuery", false);
-        breeze.NamingConvention.camelCase.setAsDefault();
         this.instance = new breeze.EntityManager({dataService: this.service});
         this.instance.metadataStore.addEntityType({
             shortName: "Session",
