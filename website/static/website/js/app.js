@@ -33,11 +33,33 @@ App.BreezeStore = Ember.Object.extend({
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
         this.instance = new breeze.EntityManager({dataService: ds});
         this.instance.metadataStore.addEntityType({
+            shortName: "Speaker",
+            namespace: "App",
+            dataProperties: {
+                id: { dataType: "Int64", isPartOfKey: true },
+                name: { dataType: "String" },
+		        session: { dataType: "Int64" }
+            },
+            navigationProperties: {
+                session: {
+                    entityTypeName: "Session", isScalar: true,
+                    associationName: "session", foreignKeyNames: ["session"]
+                }
+            }
+        });
+        this.instance.metadataStore.addEntityType({
             shortName: "Session",
             namespace: "App",
             dataProperties: {
                 id: { dataType: "Int64", isPartOfKey: true },
-                name: { dataType: "String" }
+                name: { dataType: "String" },
+                speakers: { dataType: "Undefined" }
+            },
+            navigationProperties: {
+                speakers: {
+                    entityTypeName: "Speaker", isScalar: false,
+                    associationName: "speakers", foreignKeyNames: ["speakers"]
+                }
             }
         });
     }

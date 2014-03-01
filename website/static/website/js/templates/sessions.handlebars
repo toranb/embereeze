@@ -3,6 +3,9 @@
 <tr>
   <td>{{session.name}}</td>
   <td><button {{action "remove" session}} class="delete">Delete</button></td>
+  {{#each speaker in session.speakers}}
+    <td>{{speaker.name}}</td>
+  {{/each}}
 </tr>
 {{/each}}
 </table>
