@@ -8,7 +8,7 @@ App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
             session.entityAspect.setDeleted();
-            this.store.service.saveChanges();
+            this.store.instance.saveChanges();
         }
     }
 });
@@ -16,7 +16,7 @@ App.SessionsController = Ember.ArrayController.extend({
 App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var query = breeze.EntityQuery.from("sessions").toType("Session");
-        return this.store.executeQuery(query).then(function(data) {
+        return this.store.instance.executeQuery(query).then(function(data) {
             return data.results;
         });
     }
@@ -24,16 +24,14 @@ App.SessionsRoute = Ember.Route.extend({
 
 App.BreezeStore = Ember.Object.extend({
     instance: null,
-    service: null,
     init: function() {
-        this.service = new breeze.DataService({
+        var ds = new breeze.DataService({
             serviceName: 'api',
             hasServerMetadata: false,
             useJsonp: false
         });
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
-        breeze.config.initializeAdapterInstance("ajax", "jQuery", false);
-        this.instance = new breeze.EntityManager({dataService: this.service});
+        this.instance = new breeze.EntityManager({dataService: ds});
         this.instance.metadataStore.addEntityType({
             shortName: "Session",
             namespace: "App",
@@ -42,15 +40,6 @@ App.BreezeStore = Ember.Object.extend({
                 name: { dataType: "String" }
             }
         });
-        this.instance.metadataStore.registerEntityTypeCtor(
-            'Session', null, sessionInitializer);
-        function sessionInitializer(session) {
-            session.wat = 'omg';
-        }
-    },
-    executeQuery: function(query) {
-        //clearly a hack ...
-        return this.instance.executeQuery(query);
     }
 });
 
