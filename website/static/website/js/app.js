@@ -38,12 +38,12 @@ App.BreezeStore = Ember.Object.extend({
             dataProperties: {
                 id: { dataType: "Int64", isPartOfKey: true },
                 name: { dataType: "String" },
-		        session: { dataType: "Int64" }
+	        session: { dataType: "Int64" }
             },
             navigationProperties: {
-                session: {
+                sessionModel: {
                     entityTypeName: "Session", isScalar: true,
-                    associationName: "session", foreignKeyNames: ["session"]
+                    associationName: "Session_Speakers", foreignKeyNames: ["session"]
                 }
             }
         });
@@ -52,13 +52,12 @@ App.BreezeStore = Ember.Object.extend({
             namespace: "App",
             dataProperties: {
                 id: { dataType: "Int64", isPartOfKey: true },
-                name: { dataType: "String" },
-                speakers: { dataType: "Undefined" }
+                name: { dataType: "String" }
             },
             navigationProperties: {
                 speakers: {
                     entityTypeName: "Speaker", isScalar: false,
-                    associationName: "speakers", foreignKeyNames: ["speakers"]
+                    associationName: "Session_Speakers"
                 }
             }
         });
