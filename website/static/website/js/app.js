@@ -28,7 +28,9 @@ App.BreezeStore = Ember.Object.extend({
         var ds = new breeze.DataService({
             serviceName: 'api',
             hasServerMetadata: false,
-            useJsonp: false
+            useJsonp: false,
+            // set the jsonResultsAdapter equal to the jsonResultsAdapter.js file, however appropriate
+            jsonResultsAdapter: jsonResultsAdapter
         });
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
         this.instance = new breeze.EntityManager({dataService: ds});
