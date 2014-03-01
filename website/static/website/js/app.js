@@ -8,7 +8,7 @@ App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
             session.entityAspect.setDeleted();
-            this.store.instance.saveChanges();
+            this.store.saveChanges();
         }
     }
 });
@@ -16,7 +16,7 @@ App.SessionsController = Ember.ArrayController.extend({
 App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var query = breeze.EntityQuery.from("sessions").toType("Session");
-        return this.store.instance.executeQuery(query).then(function(data) {
+        return this.store.executeQuery(query).then(function(data) {
             return data.results;
         });
     }
@@ -49,7 +49,12 @@ Ember.onLoad('Ember.Application', function(Application) {
         name: "store",
 
         initialize: function(container, application) {
-            application.register('store:main', App.BreezeStore);
+            var store = {
+                create: function() {
+                    return App.BreezeStore.create().instance;
+                }
+            };
+            application.register('store:main', store);
         }
     });
 
