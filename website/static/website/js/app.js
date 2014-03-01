@@ -24,12 +24,36 @@ App.SessionsRoute = Ember.Route.extend({
 
 App.BreezeStore = Ember.Object.extend({
     instance: null,
-    init: function() {
+    init: function() {        
+        var jsonResultsAdapter = new breeze.JsonResultsAdapter({
+            name: "App",
+            extractResults: function (data) {
+                var results = data.results;
+                if (!results) throw new Error("Unable to resolve 'results' property");
+                return results;
+            },
+            visitNode: function (node, mappingContext, nodeContext) {
+                // If the node has a speakers property,
+                if (node.speakers) {
+                    // Map the speaker to a DTO of a speaker
+                    var tempSpeakers = [];
+                    // Assuming your using jQuery, if not use this as pseudo-code
+                    $.each(node.speakers, function (index, item) {
+                        tempSpeakers.id = item;
+                    });
+                    // After mapping the dto's, set it back to the property for Breeze,
+                    node.speakers = tempSpeakers;
+                    // Then help let Breeze know this was a session we just wired up
+                    // Since we are customizing how Breeze treats this node we need to 
+                    // provide this *I believe*
+                    return { entityType: "Session" };
+                }
+            }
+        });
         var ds = new breeze.DataService({
             serviceName: 'api',
             hasServerMetadata: false,
             useJsonp: false,
-            // set the jsonResultsAdapter equal to the jsonResultsAdapter.js file, however appropriate
             jsonResultsAdapter: jsonResultsAdapter
         });
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
