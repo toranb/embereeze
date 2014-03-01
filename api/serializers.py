@@ -9,7 +9,7 @@ class SpeakerSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    speakers = SpeakerSerializer()
+    speakers = serializers.ManyPrimaryKeyRelatedField()
 
     class Meta:
         model = Session
