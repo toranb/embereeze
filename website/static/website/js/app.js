@@ -17,6 +17,7 @@ App.SessionsRoute = Ember.Route.extend({
     model: function() {
         var query = breeze.EntityQuery.from("sessions").toType("Session");
         return this.store.executeQuery(query).then(function(data) {
+            console.log(data);
             return data.results;
         });
     }
@@ -39,13 +40,10 @@ App.BreezeStore = Ember.Object.extend({
                     var tempSpeakers = [];
                     // Assuming your using jQuery, if not use this as pseudo-code
                     $.each(node.speakers, function (index, item) {
-                        tempSpeakers.id = item;
+                        tempSpeakers.push({ id: item });
                     });
                     // After mapping the dto's, set it back to the property for Breeze,
                     node.speakers = tempSpeakers;
-                    // Then help let Breeze know this was a session we just wired up
-                    // Since we are customizing how Breeze treats this node we need to 
-                    // provide this *I believe*
                     return { entityType: "Session" };
                 }
             }
@@ -64,7 +62,7 @@ App.BreezeStore = Ember.Object.extend({
             dataProperties: {
                 id: { dataType: "Int64", isPartOfKey: true },
                 name: { dataType: "String" },
-	        session: { dataType: "Int64" }
+                session: { dataType: "Int64" }
             },
             navigationProperties: {
                 sessionModel: {
@@ -87,6 +85,22 @@ App.BreezeStore = Ember.Object.extend({
                 }
             }
         });
+        var Speaker = function () {
+            this.isIdOnly = true;
+        }
+        this.instance.metadataStore.registerEntityTypeCtor("Speaker", Speaker, speakerInitializer);
+        function speakerInitializer (speaker) {
+            console.log('Initializing a speaker');
+            // If the session is only an Id,
+            if (speaker.isIdOnly) {
+                // Go load it
+                // var query = breeze.EntityQuery.from("speakers").toType("Speaker");
+                // return this.store.executeQuery(query).then(function(data) {
+                //     console.log(data);
+                //     return data.results;
+                // });
+            }
+        }
     }
 });
 
