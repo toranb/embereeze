@@ -3,9 +3,11 @@
 <tr>
   <td>{{session.name}}</td>
   <td><button {{action "remove" session}} class="delete">Delete</button></td>
+  <td>Speakers - 
   {{#each speaker in session.speakers}}
-    <td>{{speaker.name}}</td>
+    {{speaker.name}}
   {{/each}}
+  </td>
 </tr>
 {{/each}}
 </table>

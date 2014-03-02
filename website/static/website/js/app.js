@@ -8,7 +8,9 @@ App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
             session.entityAspect.setDeleted();
-            this.store.saveChanges();
+            console.log(session);
+            this.store.saveEntity(session);
+            //this.store.saveChanges();
         }
     }
 });
@@ -25,26 +27,30 @@ App.SessionsRoute = Ember.Route.extend({
 
 App.BreezeStore = Ember.Object.extend({
     instance: null,
-    init: function() {        
+    init: function() {    
         var jsonResultsAdapter = new breeze.JsonResultsAdapter({
             name: "App",
             extractResults: function (data) {
                 var results = data.results;
                 if (!results) throw new Error("Unable to resolve 'results' property");
-                return results;
+                return results && (results || results.speakers);
             },
             visitNode: function (node, mappingContext, nodeContext) {
                 // If the node has a speakers property,
                 if (node.speakers) {
                     // Map the speaker to a DTO of a speaker
                     var tempSpeakers = [];
-                    // Assuming your using jQuery, if not use this as pseudo-code
+                    // // Assuming your using jQuery, if not use this as pseudo-code
                     $.each(node.speakers, function (index, item) {
                         tempSpeakers.push({ id: item });
                     });
-                    // After mapping the dto's, set it back to the property for Breeze,
+                    // // After mapping the dto's, set it back to the property for Breeze,
                     node.speakers = tempSpeakers;
                     return { entityType: "Session" };
+                } else {
+                    console.log('Found a speaker - ', node);
+                    console.log('Speakers session - ', node.session);
+                    return { entityType: "Speaker" };
                 }
             }
         });
@@ -56,6 +62,7 @@ App.BreezeStore = Ember.Object.extend({
         });
         breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
         this.instance = new breeze.EntityManager({dataService: ds});
+        // Speaker entity
         this.instance.metadataStore.addEntityType({
             shortName: "Speaker",
             namespace: "App",
@@ -71,6 +78,7 @@ App.BreezeStore = Ember.Object.extend({
                 }
             }
         });
+        // Session entity
         this.instance.metadataStore.addEntityType({
             shortName: "Session",
             namespace: "App",
@@ -88,19 +96,27 @@ App.BreezeStore = Ember.Object.extend({
         var Speaker = function () {
             this.isIdOnly = true;
         }
-        this.instance.metadataStore.registerEntityTypeCtor("Speaker", Speaker, speakerInitializer);
+        this.instance.metadataStore.registerEntityTypeCtor("Speaker", Speaker, speakerInitializer);   
+        var self = this; 
         function speakerInitializer (speaker) {
-            console.log('Initializing a speaker');
             // If the session is only an Id,
             if (speaker.isIdOnly) {
                 // Go load it
-                // var query = breeze.EntityQuery.from("speakers").toType("Speaker");
-                // return this.store.executeQuery(query).then(function(data) {
-                //     console.log(data);
-                //     return data.results;
-                // });
+                var resourcePath = "speakers/" + speaker.id;
+                var query = breeze.EntityQuery.from(resourcePath).toType("Speaker");
+                return self.instance.executeQuery(query).then(function(data) {
+                    var thisSpeaker = data.results[0];
+                    console.log('This speaker was returned - ', thisSpeaker);
+                    thisSpeaker.isIdOnly = false;
+                    return thisSpeaker;
+                });
             }
         }
+    },
+    saveEntity: function (entity) {
+        var entityTypeName = entity.entityType.shortName
+        var so = new SaveOptions({ resourceName: entityTypeName });
+        myEntityManager.SaveChanges([entity], so );
     }
 });
 
