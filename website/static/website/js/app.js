@@ -8,9 +8,7 @@ App.SessionsController = Ember.ArrayController.extend({
     actions: {
         remove: function(session) {
             session.entityAspect.setDeleted();
-            console.log(session);
             this.store.saveEntity(session);
-            //this.store.saveChanges();
         }
     }
 });
