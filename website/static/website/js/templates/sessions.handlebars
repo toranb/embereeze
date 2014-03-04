@@ -5,7 +5,7 @@
 <table>
 {{#each session in controller}}
 <tr>
-  <td>{{session.name}}</td>
+  <td>{{input class="edit" value=session.name}}</td>
   <td><button {{action "remove" session}} class="delete">Delete</button></td>
   <td><button {{action "save" session}}>Save</button></td>
 </tr>

@@ -9,8 +9,8 @@ class SpeakerSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    speakers = SpeakerSerializer()
+    #speakers = SpeakerSerializer()
 
     class Meta:
         model = Session
-        fields = ('id', 'name', 'speakers')
+        fields = ('id', 'name', )

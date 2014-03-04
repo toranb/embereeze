@@ -7,28 +7,40 @@ App.Router.map(function() {
 App.SessionsController = Ember.ArrayController.extend({
     actions: {
         add: function() {
-            var values = {name: this.get("name")};
+            var values = {name: this.get("name"), speakers: []};
             var session = this.store.createEntity("Session", values);
-            // How can we add this to the arbitrary list of sessions?
-        },
-        remove: function(session) {
-            session.entityAspect.setDeleted();
-            // How can we call the save function on the controller now?
-        },
-        save: function (session) {
-            // Make a list of properties to stringify
-            var replacer = ['id','name'];
-            // Stringify will throw a circular reference error if we don't tell it to ignore stuff
-            var thisObj = JSON.stringify(session, replacer);
+            this.pushObject(session);
+            var data = {name: session.name, speakers: []};
             $.ajax({
               url: '/api/sessions/',
               type: 'POST',
-              data: thisObj,
+              data: data,
+              dataType: "json",
               success: function(data) {
-                // Set the id property of the session to the id returned
-                session.set('id', data.id);
-                // If the call was successful, accept changes on the entity
-                // and sets the entity back to unmodified state
+                session.id = data.id
+                session.entityAspect.acceptChanges();
+              }
+            });
+        },
+        save: function (session) {
+            var data = {name: session.name, speakers: []};
+            $.ajax({
+              url: '/api/sessions/' + session.id + '/',
+              type: 'PUT',
+              data: data,
+              dataType: "json",
+              success: function(data) {
+                session.entityAspect.acceptChanges();
+              }
+            });
+        },
+        remove: function(session) {
+            this.removeObject(session);
+            $.ajax({
+              url: '/api/sessions/' + session.id + '/',
+              type: 'DELETE',
+              success: function(data) {
+                session.entityAspect.setDeleted();
                 session.entityAspect.acceptChanges();
               }
             });
