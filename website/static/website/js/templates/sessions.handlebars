@@ -7,11 +7,7 @@
 <tr>
   <td>{{session.name}}</td>
   <td><button {{action "remove" session}} class="delete">Delete</button></td>
-  <td>Speakers - 
-  {{#each speaker in session.speakers}}
-    {{speaker.name}}
-  {{/each}}
-  </td>
+  <td><button {{action "save" session}}>Save</button></td>
 </tr>
 {{/each}}
 </table>
